@@ -1,5 +1,4 @@
 <script>
-	import Card from "./components/Card.svelte"
 	import Button from "./components/shared/Button.svelte"
 	import ItemsTable from "./components/TableDisplay/ItemsTable.svelte";
 
@@ -9,13 +8,17 @@
 		console.log("Clicked");
 	}
 
+	const options = {
+		dataset: people,
+		maxItems: 25
+	}
 
 </script>
 
 <main>
 	<!-- <Card /> -->
+	<ItemsTable {...options} />
 	<Button primary = {false} on:click={ handleClick }>Siemasz ziooom!</Button>
-	<ItemsTable dataset={people} />
 </main>
 
 <style>
@@ -25,7 +28,10 @@
 		align-items: center;
 		flex-direction: column;
 		width: 100%;
+		/* min-height: 600px; */
 		height: 100%;
-		background-color: #2E3440;
+		
+		background-color: var(--background-main);
 	}
+
 </style>

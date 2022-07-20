@@ -1,0 +1,26 @@
+:root{
+
+    /* ===== Backgrounds ===== */
+    --background-main: #2E3440;
+    --background-accent: #1F2633;
+    
+    /* ======== Text ========= */
+    --text-main: #DDDDDD;
+    --text-accent: #CCAC42;
+
+    /* ======= Buttons ======= */
+    --button-main-text: #FFFFFF;
+    --button-accent-text: #303030;
+
+    --button-main-bg: #2a72d9;
+    --button-accent-bg: #FF0051;
+
+    /* ======= Tables ======== */
+    --table-header-bg: #056605;
+    --table-header-text: #FFFFFF;
+    
+    --table-row-odd-bg: #313744;
+    --table-row-even-bg: #353C49;
+    --table-row-hover-bg: #495265;
+
+}
