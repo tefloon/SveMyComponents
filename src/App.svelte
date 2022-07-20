@@ -1,17 +1,21 @@
 <script>
 	import Card from "./components/Card.svelte"
 	import Button from "./components/shared/Button.svelte"
-	import PeopleTable from "./components/TableDisplay/PeopleTable.svelte";
+	import ItemsTable from "./components/TableDisplay/ItemsTable.svelte";
+
+	import people from "./stores/PeopleStore";
 
 	const handleClick = () => {
 		console.log("Clicked");
 	}
+
+
 </script>
 
 <main>
 	<!-- <Card /> -->
 	<Button primary = {false} on:click={ handleClick }>Siemasz ziooom!</Button>
-	<PeopleTable />
+	<ItemsTable dataset={people} />
 </main>
 
 <style>

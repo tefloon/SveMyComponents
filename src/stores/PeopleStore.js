@@ -3,27 +3,35 @@ import { writable } from "svelte/store";
 const people = writable([
     {
         id: 1,
-        name: "Nataliia",
-        surname: "Kurek",
-        gender: "F",
-        address: "ul. Globusowa 5",
-        city: "Warszawa"
+        imię: "Nataliia",
+        nazwisko: "Kurek",
+        płeć: "Kobieta",
+        adres: "ul. Globusowa 5",
+        miasto: "Warszawa"
     },
     {
         id: 2,
-        name: "Zdzisław",
-        surname: "Krajewska",
-        gender: "M",
-        address: "al. Jerozolimskie 198S",
-        city: "Warszawa"
+        imię: "Zdzisław",
+        nazwisko: "Krajewska",
+        płeć: "Mężczyzna",
+        adres: "al. Jerozolimskie 198S",
+        miasto: "Warszawa"
     },
     {
         id: 3,
-        name: "Helena",
-        surname: "Woźniak",
-        gender: "F",
-        address: "ul. Globusowa 17",
-        city: "Warszawa"
+        imię: "Helena",
+        nazwisko: "Woźniak",
+        płeć: "Kobieta",
+        adres: "ul. Globusowa 17",
+        miasto: "Warszawa"
+    },
+    {
+        id: 4,
+        imię: "Andrzej",
+        nazwisko: "Nowak",
+        płeć: "Mężczyzna",
+        adres: "ul. Globusowa 26",
+        miasto: "Poznań"
     },
 ]);
 
