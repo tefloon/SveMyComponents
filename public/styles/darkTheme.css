@@ -2,11 +2,23 @@
 
     /* ===== Backgrounds ===== */
     --background-main: #2E3440;
+    --background-main-hover: #2e5972;
+    --background-main-disabled: #797979;
+
+
     --background-accent: #1F2633;
+    --background-accent-hover: #0b2350;
+    --background-accent-disabled: #797979;
     
     /* ======== Text ========= */
     --text-main: #DDDDDD;
+    --text-hover: #DDDDDD;
+    --text-main-disabled: #a7a7a7;
+    
     --text-accent: #CCAC42;
+    --text-accent-hover: #CCAC42;
+    --text-accent-disabled: #746b50;
+
 
     /* ======= Buttons ======= */
     --button-main-text: #FFFFFF;

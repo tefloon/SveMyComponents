@@ -7,7 +7,9 @@
 //       Imports 
 // =====================
     import ItemRow from "./ItemRow.svelte";
-    import people from "../../stores/PeopleStore";
+    import Button from "../shared/Button.svelte";
+    import Tags from "../shared/Tags.svelte";
+    
     import { capitalize, createGroups } from "../../scripts/MyUtilityFunctions"
 
 //         Props 
@@ -30,12 +32,18 @@
 //    Dividing into pages 
 // ========================
     const numberOfPages = Math.ceil(items.length / maxItems);
+    
     let itemGroups = createGroups(items, numberOfPages);
-
+    
     let currentPage = 0;
-    let currentGroup = itemGroups[currentPage]
-
-
+    $: currentGroup2 = items.slice( maxItems * currentPage, maxItems * (currentPage + 1));
+    
+//        Variables 
+// ========================
+    $: totalItems = items.length;
+    $: totalMales = items.filter( i => i["płeć"] == "M").length;
+    $: totalFemales = items.filter( (i) => { return i["płeć"] == "F"}).length;
+    
 //         Events 
 // =====================
 
@@ -43,42 +51,89 @@
     // So we can do update it as needed it
     const handleRowClick = (item) => {
         let tempItems = items;
-        tempItems[item.id - 1]["płeć"] = "K"
+        tempItems[item.id - 1]["płeć"] = "K";
+        items = tempItems;
+    }
 
-        // items = tempItems;
-        currentGroup = itemGroups[currentPage];
+    // Delete a row (item)
+    const handleRowClick2 = (item) => {
+        items = items.filter( i => i != item);
+        // currentGroup = currentGroup.filter( i => i != item);
+
+        console.log(totalMales);
     }
 
     const handleNavLinkClick = (page) =>{
         currentPage = page;
-        currentGroup = itemGroups[currentPage];
     }
+
+    const handleButtonClick = () =>{
+        items = [];
+    }
+
+    const handleFilterClicked = (tag) =>{
+        let filtersCopy = filters2;
+        filtersCopy[tag.id - 1].state =  filtersCopy[tag.id - 1].state == 'active' ? 'inactive' : 'active';
+
+        filters2 = filtersCopy;       
+    }
+
+//        Filters 
+// =====================
+    let filters = [
+        "Lokalizajca: Ursynów ",
+        "Wiek: 8-10 lat",
+        "Finanse: OK",
+        "Przedmiot: programowanie"
+    ];
+
+    let filters2 = [
+        { id: 1, type: "Lokalizacja", value: "Ursynów", state: "active" },
+        { id: 2, type: "Finanse", value: "brak zaległości", state: "active" },
+        { id: 3, type: "Wiek", value: "8-10 lat", state: "active" },
+        { id: 4, type: "Przedmiot", value: "Programowanie", state: "active" },
+    ]
 
 </script>
 
 <div class="container">
+    <div class="tableTopNav">
+        <Button primary = {false} on:click={ handleButtonClick }>Siemasz ziooom!</Button>
+    </div>
+
+    <!--  If the dataset IS empty  -->
     {#if items.length < 1 }
         <div class="emptyListContainer">
             <div class="emptyListText">Brak rekordów</div>
         </div>
+
+    <!-- If the dataset IS NOT empty -->
     {:else}
         <div class="table">
+
+            <!-- We first display the header with labels -->
             <div class="header">
-                {#each labels as label}
+                {#each labels as label}     
                     <div class="cell">{ capitalize(label) }</div>
                 {/each}
             </div>
-            {#each currentGroup as item (item[labels[0]]) }
+
+            <!-- Then the items -->
+            {#each currentGroup2 as item (item[labels[0]]) }
                 <div id={`row_${item.id}`} class="row" on:click={ () => handleRowClick(item) }>
                     <ItemRow {item} />
                 </div>
             {/each}
+
+            <!-- Lastly we display a footer just for estetic reasons -->
             <div class="tableFooter">
                 {#each Array(6) as _, i (i)}
                     <div id={ `footerRow_${i}` } class="footerItem"></div>
                 {/each}
             </div>
         </div>
+
+        <!-- If there is more than one page of records, we display page navigation -->
         {#if numberOfPages != 0 }
             <div class="tableNavContainer">
                 <div class="tableNav">
@@ -89,6 +144,12 @@
             </div>
         {/if}
     {/if}
+    {#if filters.length > 0 }
+        <Tags callback={ handleFilterClicked } tags={ filters2 }/>
+    {/if}
+    { totalMales   }
+    { totalFemales }
+    { totalItems }
 </div>
 
 <style>
@@ -99,7 +160,7 @@
 
 /* ===== Table Body ====== */
     .table {
-         display: table;
+        display: table;
         width: 100%;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
@@ -187,20 +248,28 @@
         color: red;
     }
 
+/* ===== Table Top Nav ===== */
+    .tableTopNav{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
 /* ===== No Content ====== */
     .emptyListContainer{
         display: flex;
         width: 100%;
         min-height: 150px;
-        background-color: #e9e9e9;
+        background-color: var(--background-accent);
         justify-content: center;
         align-items: center;
         border-radius: var(--table-border-radius);
+        margin: 10px 0;
     }
 
     .emptyListText{
-        color: rgb(94, 94, 94);
-        transform: rotate(10deg);
+        color: var(--text-main-disabled);
+        transform: rotate(5deg);
         font-size: 26px;
     }
         

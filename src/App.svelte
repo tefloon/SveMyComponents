@@ -1,5 +1,6 @@
 <script>
 	import Button from "./components/shared/Button.svelte"
+	import Tag from "./components/shared/Tag.svelte";
 	import ItemsTable from "./components/TableDisplay/ItemsTable.svelte";
 
 	import people from "./stores/PeopleStore";
@@ -16,10 +17,13 @@
 </script>
 
 <main>
-	<!-- <Card /> -->
-	<ItemsTable {...options} />
-	<Button primary = {false} on:click={ handleClick }>Siemasz ziooom!</Button>
+	<section>
+		<!-- <Card /> -->
+		<ItemsTable {...options} />
+		<!-- <Button primary = {false} on:click={ handleClick }>Siemasz ziooom!</Button> -->
+	</section>
 </main>
+
 
 <style>
 	main{
@@ -28,8 +32,8 @@
 		align-items: center;
 		flex-direction: column;
 		width: 100%;
-		/* min-height: 600px; */
 		height: 100%;
+		min-height: 1200px;
 		
 		background-color: var(--background-main);
 	}
