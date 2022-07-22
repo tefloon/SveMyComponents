@@ -2,8 +2,10 @@
 	import Button from "./components/shared/Button.svelte"
 	import Tag from "./components/shared/Tag.svelte";
 	import ItemsTable from "./components/TableDisplay/ItemsTable.svelte";
+	import PeopleTable from "./components/TableDisplay/PeopleTable.svelte";
 
 	import people from "./stores/PeopleStore";
+	import { pick } from "lodash-es";
 
 	const handleClick = () => {
 		console.log("Clicked");
@@ -11,15 +13,22 @@
 
 	const options = {
 		dataset: people,
-		maxItems: 25
+		maxItems: 25,
+		displayOptions: {
+			// id: "Id",
+			name: "Imię",
+			surname: "Nazwisko",
+			gender: "Płeć",
+			address: "Adres",
+			city: "Miasto"
+		}
 	}
-
 </script>
 
 <main>
 	<section>
 		<!-- <Card /> -->
-		<ItemsTable {...options} />
+		<PeopleTable {...options} />
 		<!-- <Button primary = {false} on:click={ handleClick }>Siemasz ziooom!</Button> -->
 	</section>
 </main>

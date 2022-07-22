@@ -10,7 +10,11 @@
 
 {#if item}
     {#each labels as label }
-        <div class="item"><div class="itemText">{ item[label] }</div> </div>
+        <div class="item">
+            <div class="itemText">
+                { item[label] }
+            </div>
+        </div>
     {/each}
 {/if}
 

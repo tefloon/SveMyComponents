@@ -6,60 +6,67 @@
 <script>
 //       Imports 
 // =====================
+    import PeopleRow from "./PeopleRow.svelte";
     import ItemRow from "./ItemRow.svelte";
     import Button from "../shared/Button.svelte";
     import Tags from "../shared/Tags.svelte";
     
-    import { capitalize } from "../../scripts/MyUtilityFunctions"
+    import { capitalize, createGroups } from "../../scripts/MyUtilityFunctions"
     import { pick } from "lodash-es";
 
 //         Props 
 // =====================
     export let dataset;             // Dataset to display - writable store
-    export let items = [];          // Array holding items to list
     export let maxItems = 50;       // Maximum number of items on a page
+    export let displayOptions = {
+            // id: "Id",
+        name: "Imię",
+        surname: "Nazwisko",
+        gender: "Płeć",
+        address: "Adres",
+        // city: "Miasto"
+    };
+
+    const numberOfColumns = Object.keys(displayOptions).length + 1;
     
 //     Hooking Data 
-// =====================
+// ===================== 
+    let items = [];
+
     dataset.subscribe((data) => {   // Subscribe to the store to receive updates
         items = data;               // whenever the data changes
     });
     
-    let labels = [];                // List of labels of the objects in the dataset
-    if (items.length > 0) {                 // If list of items is not empty...
-        labels = Object.keys(items[0]);     // ...read labels from the first item
-    }
 
 //    Dividing into pages 
 // ========================
-    const numberOfPages = Math.ceil(items.length / maxItems);
-    
+    $: numberOfPages = Math.ceil(items.length / maxItems);   
     let currentPage = 0;
+
     $: currentGroup = items.slice( maxItems * currentPage, maxItems * (currentPage + 1));
     
 //        Variables 
 // ========================
     $: totalItems = items.length;
-    $: totalMales = items.filter( i => i["płeć"] == "M").length;
-    $: totalFemales = items.filter( (i) => { return i["płeć"] == "F"}).length;
+    $: totalMales = items.filter( (i) => i["gender"] == "M").length;
+    $: totalFemales = items.filter( (i) => { return i["gender"] == "F"}).length;
+
+
     
 //         Events 
 // =====================
 
     // On clicked event we receive which row (item) has been clicked
     // So we can do update it as needed it
-    const handleRowClick2 = (item) => {
+    const handleRowClick2 = (person) => {
         let tempItems = items;
-        tempItems[item.id - 1]["płeć"] = "K";
+        tempItems[person.id - 1]["gender"] = "F";
         items = tempItems;
     }
 
     // Delete a row (item)
-    const handleRowClick = (item) => {
-        items = items.filter( i => i != item);
-        // currentGroup = currentGroup.filter( i => i != item);
-
-        console.log(totalMales);
+    const handleRowClick = (person) => {
+        items = items.filter( i => i != person);
     }
 
     const handleNavLinkClick = (page) =>{
@@ -76,11 +83,6 @@
 
         filters2 = filtersCopy;       
     }
-    const ob = { 
-        'imie': "Antek",
-        'naz': "Gawlikowski",
-        "wiek": 35
-    };
 
 //        Filters 
 // =====================
@@ -117,21 +119,22 @@
 
             <!-- We first display the header with labels -->
             <div class="header">
-                {#each labels as label}     
+                    <div class="cell">&nbsp;L.p.</div>
+                {#each Object.values(displayOptions) as label}     
                     <div class="cell">{ capitalize(label) }</div>
                 {/each}
             </div>
 
             <!-- Then the items -->
-            {#each currentGroup as item (item[labels[0]]) }
-                <div id={`row_${item.id}`} class="row" on:click={ () => handleRowClick(item) }>
-                    <ItemRow {item} />
+            {#each currentGroup as person, i (person.id)}
+                <div id={`row_${person.id}`} class="row" on:click={ () => handleRowClick(person) }>
+                    <PeopleRow { person } { i } { displayOptions } />
                 </div>
             {/each}
 
             <!-- Lastly we display a footer just for estetic reasons -->
             <div class="tableFooter">
-                {#each Array(6) as _, i (i)}
+                {#each Array(numberOfColumns) as _, i (i)}
                     <div id={ `footerRow_${i}` } class="footerItem"></div>
                 {/each}
             </div>
