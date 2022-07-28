@@ -10,8 +10,9 @@
     import ItemRow from "./ItemRow.svelte";
     import Button from "../shared/Button.svelte";
     import Tags from "../shared/Tags.svelte";
+    import PeopleDetails from "../DetailsDisplay/PeopleDetails.svelte";
     
-    import { capitalize, createGroups } from "../../scripts/MyUtilityFunctions"
+    import { capitalize, cssVariables, setCssVariables } from "../../scripts/MyUtilityFunctions"
     import { pick } from "lodash-es";
 
 //         Props 
@@ -66,7 +67,10 @@
 
     // Delete a row (item)
     const handleRowClick = (person) => {
-        items = items.filter( i => i != person);
+        console.log(person);
+        // items = items.filter( i => i != person);
+        selected = person;
+        showDetails = true;
     }
 
     const handleNavLinkClick = (page) =>{
@@ -100,12 +104,32 @@
         { id: 4, type: "Przedmiot", value: "Programowanie", state: "active" },
     ]
 
+//        Details 
+// =====================
+    let showDetails = false;
+    let selected = 0;
+
+    let left = 1000;
+
+    const handleMouseMove = (event) => {
+        left = event.clientX;
+        // console.log(left)
+    }
+
 </script>
 
-<div class="container">
+{#if showDetails == true }
+    <div class="modal" use:cssVariables={ { left } } >
+        <PeopleDetails person = { selected } />
+    </div>
+{/if}
+
+<div class="container" on:mousemove={handleMouseMove}>
     <div class="tableTopNav">
         <Button primary = {false} on:click={ handleButtonClick }>Siemasz ziooom!</Button>
     </div>
+
+
 
     <!--  If the dataset IS empty  -->
     {#if items.length < 1 }
@@ -128,10 +152,10 @@
             <!-- Then the items -->
             {#each currentGroup as person, i (person.id)}
                 <div id={`row_${person.id}`} class="row" on:click={ () => handleRowClick(person) }>
-                    <PeopleRow { person } { i } { displayOptions } />
+                    <PeopleRow { person } i={ i + (currentPage * maxItems) } { displayOptions } />
                 </div>
             {/each}
-
+                        
             <!-- Lastly we display a footer just for estetic reasons -->
             <div class="tableFooter">
                 {#each Array(numberOfColumns) as _, i (i)}
@@ -163,6 +187,7 @@
 /* ===== General ======= */
     .container {
         width: 960px;
+        color: #ccc;
     }
 
 /* ===== Table Body ====== */
@@ -263,8 +288,8 @@
     }
 
 /* ===== No Content ====== */
-    .emptyListContainer{
-        display: flex;
+.emptyListContainer{
+    display: flex;
         width: 100%;
         min-height: 150px;
         background-color: var(--background-accent);
@@ -279,6 +304,12 @@
         transform: rotate(5deg);
         font-size: 26px;
     }
-        
-
+    
+    /* ===== Details ====== */
+    .modal{
+        position: absolute;
+        top: 100px;
+        left: var(--left);
+        z-index: 20;
+    }
 </style>

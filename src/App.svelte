@@ -3,6 +3,8 @@
 	import Tag from "./components/shared/Tag.svelte";
 	import ItemsTable from "./components/TableDisplay/ItemsTable.svelte";
 	import PeopleTable from "./components/TableDisplay/PeopleTable.svelte";
+	import PeopleTableBox from "./components/TableDisplay/PeopleTableGrid.svelte";
+	import PeopleDetails from "./components/DetailsDisplay/PeopleDetails.svelte";
 
 	import people from "./stores/PeopleStore";
 	import { pick } from "lodash-es";
@@ -13,12 +15,12 @@
 
 	const options = {
 		dataset: people,
-		maxItems: 25,
+		maxItems: 15,
 		displayOptions: {
 			// id: "Id",
 			name: "Imię",
 			surname: "Nazwisko",
-			gender: "Płeć",
+			// gender: "Płeć",
 			address: "Adres",
 			city: "Miasto"
 		}
@@ -28,7 +30,8 @@
 <main>
 	<section>
 		<!-- <Card /> -->
-		<PeopleTable {...options} />
+		<PeopleTableBox {...options} /> 
+		<!-- <PeopleDetails dataset={ people }/> -->
 		<!-- <Button primary = {false} on:click={ handleClick }>Siemasz ziooom!</Button> -->
 	</section>
 </main>

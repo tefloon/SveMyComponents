@@ -1,10 +1,10 @@
 :root{
     --table-border-radius: 10px;
 }
-
+/* 
 * {
     color: var(--text-main);
-}
+} */
 
 .disable-select {
     -webkit-user-select: none;
