@@ -11,6 +11,7 @@
     import PeopleDetails from "../DetailsDisplay/PeopleDetails.svelte";
     import PeopleRowGrid from "./PeopleRowGrid.svelte";
     import ButtonRainbow from "../shared/ButtonRainbow.svelte";
+    import PeopleTableNav from "./PeopleTableNav.svelte";
 
     // Functions
     import {
@@ -47,8 +48,11 @@
 //    Dividing into pages
 // ========================
     $: numberOfPages = Math.ceil(items.length / maxItems);
-    let currentPage = 0;
-
+    let currentPage = 11;
+    
+    // Currently shown group
+    // e.g if we are on page 5 and there are 10 records per page
+    //     we want to show records 41-50 (inclusive)
     $: currentGroup = items.slice(
         maxItems * currentPage,
         maxItems * (currentPage + 1)
@@ -97,8 +101,8 @@
         items = tempItems;
     };
 
-    const handleNavLinkClick = (page) => {
-        currentPage = page;
+    const handleNavLinkClick = (event) => {
+        currentPage = event.detail.pageId;
     };
 
     const handleButtonClick = () => {
@@ -205,18 +209,11 @@
 
         <!-- If there is more than one page of records, we display page navigation -->
         {#if numberOfPages != 0}
-            <div class="tableNavContainer">
-
-                    {#each Array(numberOfPages) as _, i (i)}
-                        <span
-                            class="tableNavLink"
-                            on:click={() => handleNavLinkClick(i)}>{i + 1}</span
-                        >
-                    {/each}
-
-            </div>
+           <PeopleTableNav {numberOfPages} {currentPage}  on:navlicked={handleNavLinkClick} />
         {/if}
     {/if}
+
+     <!-- If there are filters present we display them -->
     {#if filters.length > 0}
         <Tags callback={handleFilterClicked} tags={filters} />
     {/if}
@@ -233,13 +230,13 @@
     </ButtonRainbow>
 </div>
 
-
 <!-- Modal Window with Details -->
 {#if detailsVisible == true}
     <div class="modal" use:cssVariables={{ left, top }}>
         <PeopleDetails person={selected} />
     </div>
 {/if}
+
 
 <style>
 /* ===== General ======= */
@@ -301,26 +298,6 @@
         background-color: var(--table-header-bg);
         border-bottom-right-radius: var(--table-border-radius);
         border-bottom-left-radius: var(--table-border-radius);
-    }
-
-
-/* ===== Table Navigation ===== */
-    .tableNavContainer {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        flex-wrap: wrap;
-
-        margin: 10px 0;
-    }
-    
-    .tableNavLink {
-        cursor: pointer;
-        padding: 0 10px;
-    }
-
-    .tableNavLink:hover {
-        color: red;
     }
 
 /* ===== Table Top Nav ===== */
