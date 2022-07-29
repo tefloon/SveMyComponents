@@ -172,9 +172,9 @@
         <div class="table">
             <!-- We first display the header with labels -->
             <div id={`headerRow`} class="row header">
-                <div class="cell header">&nbsp;L.p.</div>
+                <div class="header">L.p.</div>
                 {#each Object.values(displayOptions) as label}
-                    <div class="cell header">{capitalize(label)}</div>
+                    <div class="header">{capitalize(label)}</div>
                 {/each}
             </div> <!-- end of HEADER -->
 
@@ -206,14 +206,14 @@
         <!-- If there is more than one page of records, we display page navigation -->
         {#if numberOfPages != 0}
             <div class="tableNavContainer">
-                <div class="tableNav">
+
                     {#each Array(numberOfPages) as _, i (i)}
                         <span
                             class="tableNavLink"
                             on:click={() => handleNavLinkClick(i)}>{i + 1}</span
                         >
                     {/each}
-                </div>
+
             </div>
         {/if}
     {/if}
@@ -268,80 +268,52 @@
     .row {
         display: grid;
         grid-column: span var(--num-of-col);
-        cursor: pointer;
         grid-template-columns: subgrid;
+        cursor: pointer;
     }
-
+    
     .row:nth-of-type(odd) {
         background-color: var(--table-row-odd-bg);
+    }
+    
+    .row:nth-of-type(even) {
+        background-color: var(--table-row-even-bg);
     }
 
     .row:hover {
         background-color: var(--table-row-hover-bg);
     }
 
-/* ===== Table Header ====== */
-    .header {
-        font-weight: 900;
-        color: white;
-        text-align: center;
-    }
+    .row.header{
+        background-color: var(--table-header-bg);
+        border-top-right-radius:var(--table-border-radius);
+        border-top-left-radius: var(--table-border-radius);
 
-    .header .cell {
+        font-weight: 900;
         text-align: center;
         color: var(--table-header-text);
-        background-color: var(--table-header-bg);
+        padding: 0.2rem 0.5rem;
     }
 
-    .header .cell:first-child {
-        border-top-left-radius: var(--table-border-radius);
-    }
-
-    .header .cell:last-child {
-        border-top-right-radius: var(--table-border-radius);
-    }
-
-    .cell {
-        padding: 6px 12px;
-    }
-
-/* ===== Table Footer ====== */
     .tableFooter {
-        display: grid;
-        grid-column: span 6;
-        /* cursor: pointer; */
-        grid-template-columns: subgrid;
-    }
-
-    .footerItem {
-        /* display: table-cell; */
         height: 10px;
+        grid-column: span var(--num-of-col);
         background-color: var(--table-header-bg);
-    }
-
-    .footerItem:last-child {
         border-bottom-right-radius: var(--table-border-radius);
-    }
-
-    .footerItem:first-child {
         border-bottom-left-radius: var(--table-border-radius);
     }
+
 
 /* ===== Table Navigation ===== */
     .tableNavContainer {
         display: flex;
         flex-direction: row;
         justify-content: center;
+        flex-wrap: wrap;
+
         margin: 10px 0;
     }
     
-    .tableNav {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
     .tableNavLink {
         cursor: pointer;
         padding: 0 10px;
@@ -373,7 +345,7 @@
     .emptyListText {
         color: var(--text-main-disabled);
         transform: rotate(5deg);
-        font-size: 26px;
+        font-size: 3rem;
     }
 
 /* ===== Details ====== */
