@@ -100,7 +100,7 @@
 </div>
 
 <style>
-    h1, h2, h3{
+    h1, h3{
         color: #ccc;
     }
     
@@ -123,6 +123,10 @@
         justify-content: baseline;
         align-items: center;
         margin-bottom: 20px;
+    }
+
+    .infoGroup{
+        margin-bottom: 1rem;
     }
 
     .name{

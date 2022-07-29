@@ -1,21 +1,23 @@
 <!-- 
     Component for showing tabulated content.
-    Pass a reference to dataset to display
+    Pass a reference to a dataset to display it.
  -->
 <script>
 //       Imports
 // =====================
+    // Components
     import Button from "../shared/Button.svelte";
     import Tags from "../shared/Tags.svelte";
     import PeopleDetails from "../DetailsDisplay/PeopleDetails.svelte";
     import PeopleRowGrid from "./PeopleRowGrid.svelte";
+    import ButtonRainbow from "../shared/ButtonRainbow.svelte";
 
+    // Functions
     import {
         capitalize,
         cssVariables,
         changeCssVariable,
     } from "../../scripts/MyUtilityFunctions";
-    import { pick } from "lodash-es";
 
 //         Props
 // =====================
@@ -34,10 +36,13 @@
 // =====================
     let items = [];
 
-    dataset.subscribe((data) => {
-        // Subscribe to the store to receive updates
-        items = data; // whenever the data changes
-    });
+    // dataset.subscribe((data) => {
+    //     // Subscribe to the store to receive updates
+    //     items = data; // whenever the data changes
+    // });
+
+    // This is equivalent to the above method! <3
+    items = $dataset
 
 //    Dividing into pages
 // ========================
@@ -66,20 +71,30 @@
 //         Events
 // =====================
 
-    // On clicked event we receive which row (item) has been clicked
+    // On clicked event we receive which row (person) has been clicked
     // So we can do update it as needed it
-    const handleRowClick2 = (person) => {
+    
+    const handleRowClick = (person) => {
+        showDetails(person);        
+    };
+    
+    // Delete a row (perrson)
+    const deletePerson = (person) => {
+        items = items.filter( i => i != person);
+    }
+
+    const deleteAll = () => {
+        items = [];
+    }
+
+    const resetList = () => {
+        items = $dataset;
+    }
+
+    const updateGender = (person) => {
         let tempItems = items;
         tempItems[person.id - 1]["gender"] = "F";
         items = tempItems;
-    };
-
-    // Delete a row (item)
-    const handleRowClick = (person) => {
-        console.log(person);
-        // items = items.filter( i => i != person);
-        selected = person;
-        showDetails = true;
     };
 
     const handleNavLinkClick = (page) => {
@@ -87,28 +102,20 @@
     };
 
     const handleButtonClick = () => {
-        // items = [];
         kasia = "red";
     };
 
     const handleFilterClicked = (tag) => {
-        let filtersCopy = filters2;
+        let filtersCopy = filters;
         filtersCopy[tag.id - 1].state =
             filtersCopy[tag.id - 1].state == "active" ? "inactive" : "active";
 
-        filters2 = filtersCopy;
+        filters = filtersCopy;
     };
 
 //        Filters
 // =====================
     let filters = [
-        "Lokalizajca: Ursynów ",
-        "Wiek: 8-10 lat",
-        "Finanse: OK",
-        "Przedmiot: programowanie",
-    ];
-
-    let filters2 = [
         { id: 1, type: "Lokalizacja", value: "Ursynów", state: "active" },
         { id: 2, type: "Finanse", value: "brak zaległości", state: "active" },
         { id: 3, type: "Wiek", value: "8-10 lat", state: "active" },
@@ -117,20 +124,35 @@
 
 //        Details
 // =====================
-    let showDetails = false;
-    let selected = 0;
 
-    //   Zmiana CSS
-    // ==============
-    // 1. Tworzymy JS-ową zmienną o jakiejś nazwie                       np: let wielkosc = "20px";
-    // 2. Tworzymy CSS-ową zmienną o tej samej nazwie                    np: :root   { --wielkosc: 20px;      }
-    // 3. Używamy tej zmiennej, gdzie chcemy w CSS-ie                    np: .mojDiv { width: var(--wielkosc) } 
-    // 3. Gdzie chcemy w kodzie zmieniamy wartość JS-owej zmiennej       np: const zmianaWlk = () => { wielkosc = `${wielkosc} + 10px` }
-    // 4. Na obiekcie, który ma korzystać z tej zmiennej używamy         np: <div class="mojDiv" use:cssVariables={{ wielkosc }}
+    //  change CSS variable with JS
+    // =============================
+    // 1. Create a JS variable with some name                           e.g:    let size = "20px";
+    // 2. Create a CSS variable with the same name                      e.g:    :root { --size: 20px; }
+    // 3. Use this variable wherever you want in the CSS                e.g:    .myDiv { width: var(--size) } 
+    // 4. Change the value of the _JS_ where needed                     e.g:    const changeWlk = () => { size = `${size} + 10px` }
+    // 5. On the object using this value we apply use:cssVariables()    e.g:    <div class="myDiv" use:cssVariables={{ size }}
 
     let left = 0;
     let top = 0;
-    let kasia = "#ff0";
+        
+    let detailsVisible = false;
+    let selected = 0;
+    let lastSelected = -1;
+
+    const showDetails = (person) => {    
+        console.log(`Ostatni: ${lastSelected} \t Obecny: ${person.id}`)
+        
+        if (person.id == lastSelected) {
+            detailsVisible = false;
+            lastSelected = -1;
+            return;
+        }  
+        
+        detailsVisible = true;
+        selected = person;
+        lastSelected = selected.id;
+    }
 
     const handleMouseMove = (event) => {
         left = `${event.clientX + 20}px`;
@@ -138,19 +160,7 @@
     };
 </script>
 
-{#if showDetails == true}
-    <div class="modal" use:cssVariables={{ left, top }}>
-        <PeopleDetails person={selected} />
-    </div>
-{/if}
-
 <div class="container" on:mousemove={handleMouseMove}>
-    <div class="tableTopNav">
-        <Button primary={false} on:click={handleButtonClick}>
-            Siemasz ziooom!
-        </Button>
-    </div>
-
     <!--  If the dataset _IS_ empty  -->
     {#if items.length < 1}
         <div class="emptyListContainer">
@@ -166,7 +176,7 @@
                 {#each Object.values(displayOptions) as label}
                     <div class="cell header">{capitalize(label)}</div>
                 {/each}
-            </div>
+            </div> <!-- end of HEADER -->
 
             <!-- Then the items -->
             {#each currentGroup as person, i (person.id)}
@@ -181,7 +191,7 @@
                         {displayOptions}
                         on:click={() => handleRowClick(person)}
                     />
-                </div>
+                </div> <!-- end of ITEMS -->
             {/each}
 
             <!-- Lastly we display a footer just for estetic reasons -->
@@ -189,8 +199,9 @@
                 {#each Array(numberOfColumns) as _, i (i)}
                     <div id={`footerRow_${i}`} class="footerItem" />
                 {/each}
-            </div>
-        </div>
+            </div> <!-- end of FOOTER -->
+
+        </div>  <!-- end of TABLE -->
 
         <!-- If there is more than one page of records, we display page navigation -->
         {#if numberOfPages != 0}
@@ -207,34 +218,43 @@
         {/if}
     {/if}
     {#if filters.length > 0}
-        <Tags callback={handleFilterClicked} tags={filters2} />
+        <Tags callback={handleFilterClicked} tags={filters} />
     {/if}
-    <div class="summary" use:cssVariables={{ kasia }}>
-        {totalMales}
-        {totalFemales}
-        {totalItems}
-    </div>
+
+</div> <!-- end of CONTAINER -->
+
+<!-- Rainbow Buttons -->
+<div class="tableTopNav">
+    <ButtonRainbow on:click={resetList}>
+        Reset List
+    </ButtonRainbow>
+    <ButtonRainbow on:mousedown={deleteAll}>
+        Delete All
+    </ButtonRainbow>
 </div>
 
+
+<!-- Modal Window with Details -->
+{#if detailsVisible == true}
+    <div class="modal" use:cssVariables={{ left, top }}>
+        <PeopleDetails person={selected} />
+    </div>
+{/if}
+
 <style>
+/* ===== General ======= */
     :root {
-        --kasia: #ff0;
         --left: 0;
         --top: 0;
         --num-of-col: 6;
-        --num-of-eq-col: calc(--num-of-col - 1);
+        --num-of-eq-col: calc(var(--num-of-col) - 1);
     }
 
-    .summary {
-        color: var(--kasia);
-    }
-
-/* ===== General ======= */
     .container {
         color: #ccc;
         display: flex;
         flex-direction: column;
-        /* width: 960px; */
+        padding: 1rem 2rem;
     }
 
 /* ===== Table Body ====== */
@@ -242,10 +262,6 @@
         flex-shrink: 1;
         display: grid;
         grid-template-columns: 0.15fr repeat(var(--num-of-eq-col), 1fr);
-        /* grid-template-columns: auto minmax(0, 1fr); */
-        /* align-items: center; */
-        /* gap: 5px; */
-        /* width: 100%; */
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
 
@@ -287,7 +303,6 @@
 
     .cell {
         padding: 6px 12px;
-        /* display: table-cell; */
     }
 
 /* ===== Table Footer ====== */

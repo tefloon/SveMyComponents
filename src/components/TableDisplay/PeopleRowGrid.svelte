@@ -17,7 +17,7 @@
             </span>
         </div>
     {#each dataToShow as dataItem }
-        <div class="item" on:click>
+        <div class="item">
             <span class="itemText">
                 { dataItem }
             </span>
@@ -30,7 +30,13 @@
         padding: 6px 12px;
         text-align: left;
         vertical-align: middle;
-        /* border: 1px solid red; */
+        border-right: 1px solid rgb(82, 82, 82);
+        border-bottom: 1px solid rgb(82, 82, 82);
+    }
+
+    .item:first-child{
+        border-left: 1px solid rgb(82, 82, 82);
+        
     }
       
     .itemText{
@@ -40,9 +46,11 @@
         height: 100%;
         /* border: 1px solid green; */
     }
+
     
     .item .numbering{
         justify-content: center;       
+        padding-left: 0;
     }
    
 
