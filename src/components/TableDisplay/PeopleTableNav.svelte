@@ -1,120 +1,128 @@
 <script>
+//     Display Settings
+// =======================
+   let firstLast = 4;
+   let inTheMiddle = 9;
+   let collapse = true;
+
+   const pagesBeforeAfter = Math.floor(inTheMiddle / 2); // number of links before and after our current page
+   inTheMiddle = 2 * pagesBeforeAfter + 1; // this ensures that the value is odd
+
 //         Imports
 // ========================
-  import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
+   import { createEventDispatcher } from "svelte";
+   const dispatch = createEventDispatcher();
 
 //   External Variables
 // ========================
-  export let numberOfPages = 0;
-  export let currentPage = 10;
-  export let pagesToShowMiddle = 9; // we show two before, two after, first and last if 0 => show all
-
-  const pagesBeforeAfter = Math.floor(pagesToShowMiddle / 2); // number of links before and after our current page
-  pagesToShowMiddle = 2 * pagesBeforeAfter + 1                // this ensures that the value is odd
+   export let numberOfPages = 0;
+   export let currentPage = 10;
 
 //        Functions
 // ========================
-  const filterInvalidPages = (pages) => {
-    return pages.filter((page) => page >= 0 && page < numberOfPages);
-  };
 
-  const handleNavLinkClick = (pageClicked) => {
-    dispatch("navlicked", {
-      pageId: pageClicked,
-    });
-  };
+   const filterInvalidPages = (pages) => {
+      return pages.filter((page) => page >= 0 && page < numberOfPages);
+   };
 
-  const createMiddleRange = (currPage) => {
-    let result = [];
+   const handleNavLinkClick = (pageClicked) => {
+      dispatch("navlicked", {
+         pageId: pageClicked,
+      });
+   };
 
-    for (let i = 0; i < pagesToShowMiddle; i++) {
-      result.push(currPage + (i - pagesBeforeAfter));
-    }
+   const createMiddleRange = (currPage) => {
+      let result = [];
 
-    return result;
-  };
+      for (let i = 0; i < inTheMiddle; i++) {
+         result.push(currPage + (i - pagesBeforeAfter));
+      }
+
+      return result;
+   };
 
 //     Pages to show
 // ========================
-  let start = [0, 1];
-  $: middle = createMiddleRange(currentPage);
-  let end = [numberOfPages - 2, numberOfPages - 1];
-
-  $: pagesToShowAll = start.concat(middle, end);
-  $: pagesToShowValid = filterInvalidPages(pagesToShowAll);
-  $: pagesToShow = [...new Set(pagesToShowValid)]; // pagesToShow.sort((a, b) => {return a-b});  Not needed - could be added just in case
-
-  console.log(`Number of pages: ${numberOfPages}`)
-  // console.log(`pagesToShow[-1]: ${pagesToShow[-1]}`)
-  // console.log(`pagesToShow[-2]: ${pagesToShow[-2]}`)
-  // console.log(`pagesToShow[-3]: ${pagesToShow[-3]}`)
-  // console.log(`pagesToShow[-4]: ${pagesToShow[-4]}`)
+   let start = Array.from(Array(firstLast).keys());    // [0, 1, 2, ..., n]
+   
+   $: middle = createMiddleRange(currentPage);
+   let end = (Array.from(Array(firstLast).keys())).map( (i) => { return numberOfPages - i - 1 } ).reverse();   // for 34 pages [ 33, 32, 31, ... 34-n]
+   
+   $: pagesToShowAll = start.concat(middle, end);
+   $: pagesToShowValid = filterInvalidPages(pagesToShowAll);
+   $: pagesToShow = [...new Set(pagesToShowValid)]; 
 </script>
 
 {#if numberOfPages > 0}
-  <div class="tableNavContainer">
-    {#each pagesToShow as i (i)}
-      {#if i == pagesToShow[2] && currentPage > pagesBeforeAfter + 3}
-        <span class="tableNavLink">...</span>
-      {:else if currentPage == pagesBeforeAfter + 3 && i == 3}
-        <span
-          class="tableNavLink"
-          on:click={() => handleNavLinkClick(2)}
-        >
-          {3}
-        </span>
-      {/if}
+   <div class="tableNavContainer">
+      
+      <!-- if we DON'T COLLAPSE, show all -->
+      {#if !collapse}
+         {#each Array(numberOfPages) as _, i (i)}
+            <span class="tableNavLink" class:current={ currentPage == i } on:click={ () => handleNavLinkClick(i) } >
+               {i + 1}
+            </span>
+         {/each}
 
-        <!-- i => Gdzie wyświetlamy -->
-        <!-- currentPage => Dla jakiej strony aktywnej wyświetlamy -->
+      <!-- if DO COLLAPSE show parts -->
+      {:else}
 
-      {#if i == numberOfPages - 2 && currentPage < numberOfPages - pagesBeforeAfter - 4}
-        <span class="tableNavLink">...</span>
-      {:else if currentPage == (numberOfPages - pagesBeforeAfter - 4) && i == pagesToShow[pagesToShow.length - 2] }
-      <!-- {console.log(`Odpalam`)} -->
-        <span
-          class="tableNavLink"
-          on:click={() => handleNavLinkClick(numberOfPages - 3)}
-        >
-          {numberOfPages - 2}
-        </span>
-      {/if}
-        <span
-          class="tableNavLink"
-          class:current={currentPage == i}
-          on:click={() => handleNavLinkClick(i)}
-        >
-          {i + 1}
-        </span>
-    {/each}
-  </div>
-{/if}
+         <!-- Go through all the pages to show -->
+         {#each pagesToShow as i (i)}
 
+            <!-- If we're NOT CLOSE TO THE BEGINNING, show '...'     -->
+            {#if currentPage > (pagesBeforeAfter + firstLast + 1) && i == pagesToShow[firstLast] }
+               <span class="tableNavLink">...</span>
+            
+            <!-- If we're a the breaking point, switch '...' to the appropriate number -->
+            {:else if currentPage == pagesBeforeAfter + firstLast + 1 && i == firstLast + 1 }
+               <span class="tableNavLink" on:click={ () => handleNavLinkClick(firstLast) } >
+                  { firstLast + 1 }
+               </span>
+            {/if}
+            
+            <!-- If we're NOT CLOSE TO THE END, show '...' -->
+            {#if i == numberOfPages - firstLast  && currentPage <  numberOfPages - pagesBeforeAfter - firstLast - 2}
+               <span class="tableNavLink">...</span>
 
+            <!-- If we're a the breaking point, switch '...' to the appropriate number -->
+            {:else if currentPage == numberOfPages - pagesBeforeAfter - firstLast - 2 && i == pagesToShow[pagesToShow.length - firstLast]}
+               <span class="tableNavLink" on:click={ () => handleNavLinkClick(numberOfPages - firstLast - 1) } >
+                  {numberOfPages - firstLast }
+               </span>
+            {/if}
+
+            <!-- Show all the page numbers -->
+            <span class="tableNavLink" class:current={ currentPage == i } on:click={ () => handleNavLinkClick(i) } >
+               {i + 1}
+            </span>
+         {/each} <!-- end of EVERY PAGE loop -->
+      {/if}  <!-- end of DON't COLLAPSE if -->
+   </div>
+{/if} <!-- end of PAGES EXIST if -->
 
 <style>
-  /* ===== Table Navigation ===== */
-  .tableNavContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
+   /* ===== Table Navigation ===== */
+   .tableNavContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
 
-    margin: 10px 0;
-  }
+      margin: 10px 0;
+   }
 
-  .tableNavLink {
-    cursor: pointer;
-    padding: 0 10px;
-  }
+   .tableNavLink {
+      cursor: pointer;
+      padding: 0 10px;
+   }
 
-  .current {
-    color: yellow;
-    font-weight: 800;
-  }
+   .current {
+      color: yellow;
+      font-weight: 800;
+   }
 
-  .tableNavLink:hover {
-    color: red;
-  }
+   .tableNavLink:hover {
+      color: red;
+   }
 </style>
