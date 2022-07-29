@@ -1,0 +1,26 @@
+:root{
+
+    /* ===== Backgrounds ===== */
+    --background-main: #e7e7e7;
+    --background-accent: #a4a4a4;
+    
+    /* ======== Text ========= */
+    --text-main: #1d1d1d;
+    --text-accent: #ffc400;
+
+    /* ======= Buttons ======= */
+    --button-main-text: #FFFFFF;
+    --button-accent-text: #222222;
+
+    --button-main-bg: #2a72d9;
+    --button-accent-bg: #FF0051;
+
+    /* ======= Tables ======== */
+    --table-header-bg: #11AD11;
+    --table-header-text: #FFFFFF;
+    
+    --table-row-odd-bg: #F6F6F6;
+    --table-row-even-bg: #E9E9E9;
+    --table-row-hover-bg: #A9A9A9;
+
+}
