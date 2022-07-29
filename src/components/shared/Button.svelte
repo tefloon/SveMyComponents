@@ -8,24 +8,21 @@
 
 <style>
     button {
-        /* TODO: Move color variables to global stylesheet */
-        /* --primary-color: #2a72d9;
-        --secondary-color: #972ad9; */
-
         cursor: pointer;
 
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
+
+        margin: 10px;
         padding: 15px 25px;
-        gap: 10px;
 
         height: 50px;
         border-radius: 6px;
         border: none;
 
-        color: #fff;
+        color: var(--button-main-text);
         font-weight: bold;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
@@ -43,10 +40,11 @@
     }
 
     .primary {
-        background: var(--primary-color);
+        background: var(--button-main-bg);
     }
 
     .secondary {
-        background: var(--secondary-color);
+        color: var(--button-accent-text);
+        background: var(--button-accent-bg);
     }
 </style>
