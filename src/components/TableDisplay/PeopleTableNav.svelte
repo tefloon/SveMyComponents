@@ -1,12 +1,12 @@
 <script>
 //     Display Settings
 // =======================
-   let firstLast = 4;
-   let inTheMiddle = 9;
+   let firstLast = 3;
+   let inTheMiddle = 5;
    let collapse = true;
 
    const pagesBeforeAfter = Math.floor(inTheMiddle / 2); // number of links before and after our current page
-   inTheMiddle = 2 * pagesBeforeAfter + 1; // this ensures that the value is odd
+   inTheMiddle = 2 * pagesBeforeAfter + 1;               // this ensures that the value is odd
 
 //         Imports
 // ========================
@@ -51,78 +51,133 @@
    $: pagesToShowAll = start.concat(middle, end);
    $: pagesToShowValid = filterInvalidPages(pagesToShowAll);
    $: pagesToShow = [...new Set(pagesToShowValid)]; 
+
+   $: lastPage = pagesToShow[pagesToShow.length - 1]
 </script>
 
 {#if numberOfPages > 0}
    <div class="tableNavContainer">
-      
-      <!-- if we DON'T COLLAPSE, show all -->
-      {#if !collapse}
-         {#each Array(numberOfPages) as _, i (i)}
-            <span class="tableNavLink" class:current={ currentPage == i } on:click={ () => handleNavLinkClick(i) } >
-               {i + 1}
-            </span>
-         {/each}
 
-      <!-- if DO COLLAPSE show parts -->
-      {:else}
+      <!-- if we're not at the first page, show arrows -->
+      <div class="arrows">
+         {#if currentPage != 0 }
+            <button class="tableNavBtn" on:click={ () => handleNavLinkClick(currentPage - 1) } >
+               {"<<"}
+            </button>
+         {/if}
+      </div>
 
-         <!-- Go through all the pages to show -->
-         {#each pagesToShow as i (i)}
+      <div class="tableNavPagesContainer" class:tableNavPagesContainer_all={ !collapse } class:tableNavPagesContainer_collapse={ collapse }>
+         <!-- if we DON'T COLLAPSE, show all -->
+         {#if !collapse}
+            {#each Array(numberOfPages) as _, i (i)}
+                  <button class="tableNavBtn" class:current={ currentPage == i } on:click={ () => handleNavLinkClick(i) } >
+                     {i + 1}
+                  </button>
+            {/each}
 
-            <!-- If we're NOT CLOSE TO THE BEGINNING, show '...'     -->
-            {#if currentPage > (pagesBeforeAfter + firstLast + 1) && i == pagesToShow[firstLast] }
-               <span class="tableNavLink">...</span>
-            
-            <!-- If we're a the breaking point, switch '...' to the appropriate number -->
-            {:else if currentPage == pagesBeforeAfter + firstLast + 1 && i == firstLast + 1 }
-               <span class="tableNavLink" on:click={ () => handleNavLinkClick(firstLast) } >
-                  { firstLast + 1 }
-               </span>
-            {/if}
-            
-            <!-- If we're NOT CLOSE TO THE END, show '...' -->
-            {#if i == numberOfPages - firstLast  && currentPage <  numberOfPages - pagesBeforeAfter - firstLast - 2}
-               <span class="tableNavLink">...</span>
+         <!-- if DO COLLAPSE show parts -->
+         {:else}
 
-            <!-- If we're a the breaking point, switch '...' to the appropriate number -->
-            {:else if currentPage == numberOfPages - pagesBeforeAfter - firstLast - 2 && i == pagesToShow[pagesToShow.length - firstLast]}
-               <span class="tableNavLink" on:click={ () => handleNavLinkClick(numberOfPages - firstLast - 1) } >
-                  {numberOfPages - firstLast }
-               </span>
-            {/if}
+            <!-- Go through all the pages to show -->
+            {#each pagesToShow as i (i)}
 
-            <!-- Show all the page numbers -->
-            <span class="tableNavLink" class:current={ currentPage == i } on:click={ () => handleNavLinkClick(i) } >
-               {i + 1}
-            </span>
-         {/each} <!-- end of EVERY PAGE loop -->
-      {/if}  <!-- end of DON't COLLAPSE if -->
-   </div>
+               <!-- If we're NOT CLOSE TO THE BEGINNING, show '...'     -->
+               {#if currentPage > (pagesBeforeAfter + firstLast + 1) && i == pagesToShow[firstLast] }
+               <button class="tableNavBtn" on:click={ () => collapse = false } >
+                  {"..."}
+               </button>
+               
+               <!-- If we're a the breaking point, switch '...' to the appropriate number -->
+               {:else if currentPage == pagesBeforeAfter + firstLast + 1 && i == firstLast + 1 }
+                  <button class="tableNavBtn" on:click={ () => handleNavLinkClick(firstLast) } >
+                     { firstLast + 1 }
+                  </button>
+               {/if}
+               
+               <!-- If we're NOT CLOSE TO THE END, show '...' -->
+               {#if i == numberOfPages - firstLast  && currentPage <  numberOfPages - pagesBeforeAfter - firstLast - 2}
+               <button class="tableNavBtn" on:click={ () => collapse = false } >
+                  {"..."}
+               </button>
+
+               <!-- If we're a the breaking point, switch '...' to the appropriate number -->
+               {:else if currentPage == numberOfPages - pagesBeforeAfter - firstLast - 2 && i == pagesToShow[pagesToShow.length - firstLast]}
+                  <button class="tableNavBtn" on:click={ () => handleNavLinkClick(numberOfPages - firstLast - 1) } >
+                     {numberOfPages - firstLast }
+                  </button>
+               {/if}
+
+               <!-- Show all the page numbers -->
+                  <button class="tableNavBtn" class:current={ currentPage == i } on:click={ () => handleNavLinkClick(i) } >
+                     {i + 1}
+                  </button>
+
+            {/each} <!-- end of EVERY PAGE loop -->
+         {/if}  <!-- end of DON't COLLAPSE if -->
+      </div>
+
+      <!-- if we're not at the last page, show arrows -->
+      <div class="arrows">
+         {#if currentPage != lastPage }
+            <button class="tableNavBtn" on:click={ () => handleNavLinkClick(currentPage + 1) } >
+               {">>"}
+            </button>
+         {/if}
+      </div>
+
+   </div> <!-- end of tableNavContainer -->
 {/if} <!-- end of PAGES EXIST if -->
 
 <style>
-   /* ===== Table Navigation ===== */
-   .tableNavContainer {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      flex-wrap: wrap;
 
+   .tableNavContainer{
+      display: grid;
+      grid-template-columns: min-content auto min-content;
       margin: 10px 0;
    }
 
-   .tableNavLink {
+   .tableNavPagesContainer_all {
+      display: grid;
+      grid-auto-rows: 1.6rem;
+      grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+      gap: .2rem;
+
+   }
+
+   .tableNavPagesContainer_collapse {
+      display: flex;
+      justify-content: center;
+      gap: .2rem;
+   }
+
+   .tableNavBtn{
+      background-color: rgba(0,0,0,.5);
+      border: 1px solid rgb(82, 82, 82);
+      border-radius: 3px;
+      color: var(--table-header-text);
       cursor: pointer;
-      padding: 0 10px;
+      padding: 0 5px;
+   }
+
+   .tableNavBtn:hover{
+       background-color: rgba(0,0,0,.75);
+   }
+
+   .arrows{
+      display: flex;
+      width: 3rem;
+      justify-content: center;
+      align-items: center;
+   }
+   
+   .arrows .tableNavBtn{
+      padding: 0.1rem 0.5rem;
+      padding-bottom: 0.2rem;
    }
 
    .current {
-      color: yellow;
+      /* color: yellow; */
       font-weight: 800;
-   }
-
-   .tableNavLink:hover {
-      color: red;
    }
 </style>

@@ -48,7 +48,7 @@
 //    Dividing into pages
 // ========================
     $: numberOfPages = Math.ceil(items.length / maxItems);
-    let currentPage = 11;
+    let currentPage = 0;
     
     // Currently shown group
     // e.g if we are on page 5 and there are 10 records per page
@@ -120,10 +120,10 @@
 //        Filters
 // =====================
     let filters = [
-        { id: 1, type: "Lokalizacja", value: "Ursynów", state: "active" },
-        { id: 2, type: "Finanse", value: "brak zaległości", state: "active" },
-        { id: 3, type: "Wiek", value: "8-10 lat", state: "active" },
-        { id: 4, type: "Przedmiot", value: "Programowanie", state: "active" },
+        // { id: 1, type: "Lokalizacja", value: "Ursynów", state: "active" },
+        // { id: 2, type: "Finanse", value: "brak zaległości", state: "active" },
+        // { id: 3, type: "Wiek", value: "8-10 lat", state: "active" },
+        // { id: 4, type: "Przedmiot", value: "Programowanie", state: "active" },
     ];
 
 //        Details
@@ -165,14 +165,20 @@
 </script>
 
 <div class="container" on:mousemove={handleMouseMove}>
+
     <!--  If the dataset _IS_ empty  -->
     {#if items.length < 1}
         <div class="emptyListContainer">
             <div class="emptyListText">Brak rekordów</div>
         </div>
 
-        <!-- If the dataset _IS NOT_ empty -->
+    <!-- If the dataset _IS NOT_ empty -->
     {:else}
+        <!-- If there is more than one page of records, we display page navigation -->
+        {#if numberOfPages != 0}
+           <PeopleTableNav {numberOfPages} {currentPage}  on:navlicked={handleNavLinkClick} />
+        {/if}
+
         <div class="table">
             <!-- We first display the header with labels -->
             <div id={`headerRow`} class="row header">
@@ -252,10 +258,18 @@
         display: flex;
         flex-direction: column;
         padding: 1rem 2rem;
+        width: 900px; 
+    }
+
+    @media screen and (max-width: 950px){
+        .container{
+            width: initial;
+        }
     }
 
 /* ===== Table Body ====== */
     .table {
+        shape-outside: circle();
         flex-shrink: 1;
         display: grid;
         grid-template-columns: 0.15fr repeat(var(--num-of-eq-col), 1fr);
@@ -276,7 +290,7 @@
     .row:nth-of-type(even) {
         background-color: var(--table-row-even-bg);
     }
-
+    
     .row:hover {
         background-color: var(--table-row-hover-bg);
     }

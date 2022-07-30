@@ -12,7 +12,7 @@
 		dataset: people,
 		maxItems: 15,
 		displayOptions: {
-			// id: "Id",
+			// hash: "Id",
 			name: "Imię",
 			surname: "Nazwisko",
 			// gender: "Płeć",
