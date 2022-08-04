@@ -11,23 +11,26 @@
 
 <!-- TODO: Add an edit icon next to each item -->
 {#if person}
-        <div class="item">
-            <span class="itemText numbering">
-                { i + 1 }
-            </span>
-        </div>
-    {#each dataToShow as dataItem }
-        <div class="item">
-            <span class="itemText">
-                { dataItem }
-            </span>
-        </div>
-    {/each}
+
+            <div class="item numbering">
+                <span class="itemText">
+                    { i + 1 }
+                </span>
+            </div>
+        {#each dataToShow as dataItem }
+            <div class="item">
+                <span class="itemText">
+                    { dataItem }
+                </span>
+            </div>
+        {/each}
+
 {/if}
 
 <style>
     .item{
-        padding: 6px 12px;
+        display: table-cell;
+        padding: 0.5rem 1rem;
         text-align: left;
         vertical-align: middle;
         border-right: 1px solid rgb(82, 82, 82);
@@ -35,23 +38,15 @@
     }
 
     .item:first-child{
-        border-left: 1px solid rgb(82, 82, 82);
-        
+        border-left: 1px solid rgb(82, 82, 82);      
     }
       
     .itemText{
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        /* border: 1px solid green; */
+        font-size: inherit;  /* Not to have empty selectors */
     }
-
-    
-    .item .numbering{
-        justify-content: center;       
-        padding-left: 0;
+ 
+    .item.numbering{
+        width: 2rem;
+        text-align: center;     
     }
-   
-
 </style>

@@ -23,9 +23,7 @@
 </script>
 
 <main>
-	<section>
 		<PeopleTable {...options} /> 
-	</section>
 </main>
 
 
