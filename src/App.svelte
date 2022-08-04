@@ -1,5 +1,5 @@
 <script>
-	import PeopleTableBox from "./components/TableDisplay/PeopleTableGrid.svelte";
+	import PeopleTable from "./components/TableDisplay/PeopleTable.svelte";
 
 	import people from "./stores/PeopleStore";
 	import { pick } from "lodash-es";
@@ -24,7 +24,7 @@
 
 <main>
 	<section>
-		<PeopleTableBox {...options} /> 
+		<PeopleTable {...options} /> 
 	</section>
 </main>
 
